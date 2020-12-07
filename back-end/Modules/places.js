@@ -1,7 +1,8 @@
 const { json } = require("express");
 const { Int32 } = require("mongodb");
 const mongoose = require("mongoose");
-const region = require("../Modules/region")
+const { schema } = require("./users");
+
 
 var placeSchema = new mongoose.Schema({
     name: {
@@ -9,24 +10,25 @@ var placeSchema = new mongoose.Schema({
         required: true
     },
     address: {
-        type: json,
+        type: JSON,
         required: true
     },
-    openingtime: {
+    avatar: {
         type: String,
         required: true
     },
-    picture: {
-        type: String,
-        required: true
+    categories:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'category'
+    }],
+    image:{
+        type:[]
     },
-    price: {
-        type: String,
-        required: true
+    rating:{
+        type:Number
     },
-    status: {
-        type: Int32,
-        required: true
+    status:{
+        type:Boolean
     }
-});
-module.exports = mongoose.model("Place", userSchema);
+})
+module.exports = mongoose.model("Place", placeSchema);

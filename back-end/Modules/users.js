@@ -14,8 +14,17 @@ var userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    email:{
+        type:String
+    },
+    phone:{
+        type:String
+    },
     avatar: {
         type: String
+    },
+    isAdmin:{
+        type:Boolean
     }
 });
 
