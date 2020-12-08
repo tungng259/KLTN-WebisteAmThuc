@@ -15,9 +15,12 @@ const Category = require("../Modules/category")
 
 //post new category
 router.post('/70830c14-476d-4ece-b52c-b39e2c4997e4', upload.single('placeImage'), (req, res) => {
-    var categories = new Category();
-    categories.name = req.body.name;
-    categories.avatar = req.file.originalname;
+    var categories = new Category(
+        name = req.body.name,
+        avatar = req.file.originalname,
+        number = 0
+    );
+    
     try {
         categories.save();
         res.json(categories);

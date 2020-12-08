@@ -1,7 +1,8 @@
 const express = require("express");
 const multer = require("multer");
 const Post = require("../Modules/post");
-const Place = require("../Modules/places")
+const Place = require("../Modules/places");
+const router = express.Router();
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -56,7 +57,7 @@ router.post('/5469597b-3042-4088-a657-599bf3d9b1ba', upload.single('postImage'),
         reported = 0
     );
     try {
-        updateRatingPlace(req);
+        updateRatingPlace(req.body.place);
         post.save();
         res.json(post);
     } catch (err) {
@@ -64,9 +65,9 @@ router.post('/5469597b-3042-4088-a657-599bf3d9b1ba', upload.single('postImage'),
     }
 });
 
-function updateRatingPlace(req){
+function updateRatingPlace(id){
     try {
-        const place = await Place.findById(req.body.place);
+        const place = await Place.findById(id);
         place.rating = place.rating + req.body.rating;
         Place.updateOne({_id: place._id},{
             rating = place.rating
