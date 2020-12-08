@@ -2,7 +2,9 @@ const db = require('./database');
 
 const users = require('./Controllers/UserController');
 const places = require('./Controllers/PlaceController');
-const category = require('./Controllers/CategoryController');
+const categories = require('./Controllers/CategoryController');
+const posts = require('./Controllers/PostController');
+
 const express = require('express');
 const mongoose = require('mongoose');
 
@@ -17,3 +19,4 @@ app.listen(9000, function() {
 app.use('/user', users);
 app.use('/place', places);
 app.use('/category',category);
+app.use('/post',posts);

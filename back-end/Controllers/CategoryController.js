@@ -4,7 +4,7 @@ const category = require("../Modules/category");
 const router = express.Router();
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, './uploads/img')
+      cb(null, './uploads/img/category')
     },
     filename: function (req, file, cb) {
       cb(null, file.originalname)

@@ -5,7 +5,7 @@ const User = require("../Modules/users")
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, './uploads/img')
+      cb(null, './uploads/img/user')
     },
     filename: function (req, file, cb) {
       cb(null, file.originalname)
@@ -82,4 +82,6 @@ router.post('/509b6cf0-3996-4853-8e28-1dcd93ac14f2/',upload.single('userImage'),
         res.send('Error' + err);
     }
 });
+
+
 module.exports = router;

@@ -4,7 +4,7 @@ const category = require("../Modules/category");
 const router = express.Router();
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, './uploads/img')
+      cb(null, './uploads/img/place')
     },
     filename: function (req, file, cb) {
       cb(null, file.originalname)
@@ -75,7 +75,7 @@ router.post('/6f0421d5-4357-49f8-8b24-14f79bea7f33', upload.single('placeAvatar'
     }
 });
 
-// get user by id
+// get place by id
 router.get('/b0146340-5a11-49b5-a2f7-9b31baad0e5c/:id', async(req, res) => {
     try {
         const place = await Place.findById(req.params.id);
