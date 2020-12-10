@@ -28,4 +28,11 @@ router.post('/d9bf9936-c269-401e-a811-bb2b19b40be6',(req,res)=>{
     Place.deleteOne({_id: req.body._id})
 });
 
+//get reported post
+router.get('/d9bf9936-c269-401e-a811-bb2b19b40be6',(req,res)=>{
+    count = User.count()/2;
+    reportedPost = Post.find({});
+    res.json({ reportedPost});
+});
+
 module.exports = router;

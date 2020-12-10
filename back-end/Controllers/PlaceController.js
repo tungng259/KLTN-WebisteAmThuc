@@ -1,6 +1,6 @@
 const express = require("express");
 const multer = require("multer");
-const category = require("../Modules/category");
+const Category = require("../Modules/category");
 const Place = require("../Modules/places");
 const router = express.Router();
 var storage = multer.diskStorage({
@@ -78,7 +78,7 @@ router.post('/6f0421d5-4357-49f8-8b24-14f79bea7f33', upload.single('placeAvatar'
 });
 function increaseCategoryNumber(id){
     try {
-        const categories = await category.findById(id);
+        const categories = await Category.findById(id);
         categories.number = categories.number++;
     } catch (err) {
         res.send('Error' + err);
@@ -116,6 +116,20 @@ router.post('/cfc9853d-2866-473d-b274-88d838ea29c1', async(req, res) => {
             },
             status = true
         })
+        res.json({'Sucessful': true });
+    }
+    catch (err) {
+        res.send('Error' + err);
+    }
+});
+
+//delete Place
+router.post('/b1ba7a47-29a2-470c-9a98-b511b401dd4b', async(req, res) => {
+    try {
+        categories = Category.find({_id: req.body.categories});
+        Place.deleteOne({_id: req.body._id});
+        categories.number--;
+        Category.findByIdAndUpdate({_id:req.body.categories},{number:categories.number--});
         res.json({'Sucessful': true });
     }
     catch (err) {
