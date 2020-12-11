@@ -31,22 +31,18 @@ function App() {
         <SignPage />
       </Route>
       <Route path="/contact" exact>
-        <Header/>
         <ContactPage />
       </Route>
       <Route path="/menu" exact>
-        <Header/>
         <MenuPage />
       </Route>
       <Route path="/account" exact>
         <AccountPage />
       </Route>
       <Route path="/newpost" exact>
-        <Header/>
         <NewPostPage />
       </Route>
       <Route path="/index" exact>
-        <Header/>
         <HomePage />
       </Route>
       <Redirect to="/" />
@@ -55,6 +51,7 @@ function App() {
 
   return (
     <Router>
+      <Header/>
       <div>
         {routes}
       </div>
