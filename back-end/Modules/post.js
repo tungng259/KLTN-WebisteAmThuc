@@ -28,6 +28,9 @@ var postSchema = new mongoose.Schema({
     },
     reported:{
         type:Number
+    },
+    like:{
+        type:Number
     }
 })
 module.exports = mongoose.model("Post", postSchema);

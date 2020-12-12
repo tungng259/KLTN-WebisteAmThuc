@@ -30,12 +30,12 @@ router.post('/d9bf9936-c269-401e-a811-bb2b19b40be6',(req,res)=>{
 
 //get reported post
 router.get('/d9bf9936-c269-401e-a811-bb2b19b40be6',(req,res)=>{
-    count = User.count();
+    var count = User.count();
     if(count <=10){
-        reportedPost = Post.find({reported: { $mt: count/3 } });
+        reportedPost = Post.find({reported: { $gte: count/3 } });
     }
     else{
-        reportedPost = Post.find({reported: { $mt: 10 } });
+        reportedPost = Post.find({reported: { $gte: 10 } });
     }
     res.json({ reportedPost});
 });

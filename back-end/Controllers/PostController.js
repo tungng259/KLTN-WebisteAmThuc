@@ -1,7 +1,10 @@
 const express = require("express");
 const multer = require("multer");
+
 const Post = require("../Modules/post");
 const Place = require("../Modules/places");
+const Like = require("../Modules/likePost");
+
 const router = express.Router();
 
 var storage = multer.diskStorage({
@@ -100,5 +103,40 @@ router.post('/075313a0-481a-4a13-9765-3f14ee17b612', async(req, res) => {
         res.send('Error' + err);
     }
 });
+
+//like post
+router.post('/094a0019-5f18-4c53-b8fc-a8142a21e622', async(req, res) => {
+    try {
+        checklike = Like.findOne({id_user: req.body.id_user,id_post: req.body.id_post});
+        if(checklike == null){
+            increaseLikePost(req.body.id_user,req.body.id_post);
+        }
+        else{
+            decreaseLikePost(req.body.id_user,req.body.id_post);
+        }
+        res.json({'Sucessful': true });
+    }
+    catch{
+        res.send('Error' + err);
+    }
+});
+
+function increaseLikePost(id_User,id_Post){
+    var post = Post.findOne({_id:id_Post});
+    var count = post.like;
+    Post.findByIdAndUpdate(id_Post,{like: ++count});
+    const like = new Like(
+        id_user = id_User,
+        id_post = id_Post
+    )
+    Like.save();
+}
+
+function decreaseLikePost(id_User,id_Post){
+    var post = Post.findOne({_id:id_Post});
+    var count = post.like;
+    Post.findByIdAndUpdate(id_Post,{like: --count});
+    Like.deleteOne({id_user:id_User,id_Post:id_Post});
+}
 
 module.exports = router;
