@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const User = require("../Modules/users")
+const User = require("../Modules/users");
+const Follow = require("../Modules/follow");
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -31,6 +32,7 @@ router.post('/6e45ab7f-4ccc-451b-8e8a-fca558df5f0c', async(req, res) => {
         users.username = req.body.username;
         users.password = req.body.password;
         users.fullname = req.body.fullname;
+        users.folloer = 0;
         users.isAdmin = false;
         try {
             users.save();
@@ -57,7 +59,13 @@ router.post('/4b3735b2-533d-4963-9e39-8cb61f3d1198', async(req, res) => {
 router.get('/077137bb-22ec-479c-8be3-62dd5c9e599d/:id', async(req, res) => {
     try {
         const user = await User.findById(req.params.id);
-        res.json(user);
+        if(req.body.id_user != null){
+            var result = checkfollowed(user._id,req.body.id_user);
+            res.json(post, {isLiked : result});
+        }
+        else{
+            res.json(user);
+        }
     } catch (err) {
         res.send('Error' + err);
     }
@@ -83,5 +91,46 @@ router.post('/509b6cf0-3996-4853-8e28-1dcd93ac14f2/',upload.single('userImage'),
     }
 });
 
+//follow-unfollow user
+router.post('/26828687-b3e0-431b-9226-55fb3a857bef', async(req, res) => {
+    try {
+        var checkfollow = Follow.findOne({id_user: req.body.id_user,id_follower: req.body.id_post});
+        if(checkfollow  == null){
+            FollowUser(req.body.id_followed,req.body.id_user);
+        }
+        else{
+            decreaseLikePost(req.body.id_followed,req.body.id_user);
+        }
+        res.json({'Sucessful': true });
+    }
+    catch{
+        res.send('Error' + err);
+    }
+});
 
+function FollowUser(id_User,id_Follower){
+    var user = User.findOne({_id:id_User});
+    var count = user.follower;
+    User.findByIdAndUpdate(id_User,{follower: ++count});
+    const follow = new Follow(
+        id_user = id_User,
+        id_follower = id_Follower
+    )
+    Follow.save();
+}
+
+function UnFollowUser(id_Followed,id_Follower){
+    var user = User.findOne({_id:id_Followed});
+    var count = user.follwer;
+    User.findByIdAndUpdate(id_Followed,{follower: --count});
+    Follow.deleteOne({id_user:id_Followed,id_follower:id_Follower});
+}
+
+//check is user followed ?
+function checkfollowed(id_Followed,id_Follower){
+    Follow.find({id_user:id_Followed}).forEach(function () {
+        if(id_follower == id_Follower ) return true;
+    });
+    return false;
+}
 module.exports = router;

@@ -4,6 +4,7 @@ const users = require('./Controllers/UserController');
 const places = require('./Controllers/PlaceController');
 const categories = require('./Controllers/CategoryController');
 const posts = require('./Controllers/PostController');
+const admin = require('./Controllers/AdminController');
 
 const express = require('express');
 const mongoose = require('mongoose');

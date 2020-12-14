@@ -29,6 +29,9 @@ var placeSchema = new mongoose.Schema({
     },
     status:{
         type:Boolean
+    },
+    id_user:{
+        type:String
     }
 })
 module.exports = mongoose.model("Place", placeSchema);

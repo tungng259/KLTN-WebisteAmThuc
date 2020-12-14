@@ -39,8 +39,14 @@ router.get('/6f65f910-b4c7-4276-9410-dbb46b1f7ad6/:id', async(req, res) => {
 //get one post (detail post)
 router.get('/4911b499-bc8a-42a9-8cf0-34b1dd7f3c71/:id', async(req, res) => {
     try {
-        const posts = await Post.findOne({_id:id, status:true});
-        res.json(places);
+        const post = await Post.findOne({_id:id, status:true});
+        if(req.body.id_user != null){
+            var result = checkliked(post._id,req.body.id_user);
+            res.json(post, {isLiked : result});
+        }
+        else{
+            res.json(post);
+        }
     } catch (err) {
         res.send('Error' + err);
     }
@@ -57,6 +63,7 @@ router.post('/5469597b-3042-4088-a657-599bf3d9b1ba', upload.single('postImage'),
         userPost = req.body.userPost,
         postDate = postTime,
         rating =req.body.rating,
+        like = 0,
         reported = 0
     );
     try {
@@ -104,7 +111,7 @@ router.post('/075313a0-481a-4a13-9765-3f14ee17b612', async(req, res) => {
     }
 });
 
-//like post
+//like Post-unlike Post
 router.post('/094a0019-5f18-4c53-b8fc-a8142a21e622', async(req, res) => {
     try {
         checklike = Like.findOne({id_user: req.body.id_user,id_post: req.body.id_post});
@@ -137,6 +144,15 @@ function decreaseLikePost(id_User,id_Post){
     var count = post.like;
     Post.findByIdAndUpdate(id_Post,{like: --count});
     Like.deleteOne({id_user:id_User,id_Post:id_Post});
+}
+
+//check is post liked
+//check is user followed ?
+function checkliked(id_Post,id_User){
+    Like.find({id_post:id_Post}).forEach(function () {
+        if(id_user == id_User ) return true;
+    });
+    return false;
 }
 
 module.exports = router;

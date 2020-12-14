@@ -23,6 +23,9 @@ var userSchema = new mongoose.Schema({
     avatar: {
         type: String
     },
+    follower:{
+        type:Number
+    },
     isAdmin:{
         type:Boolean
     }
