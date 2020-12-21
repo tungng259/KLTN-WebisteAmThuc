@@ -19,13 +19,13 @@ router.post('/0508c70f-e907-4d2a-a718-479e6fab5749', async(req, res) => {
 
 //accept post new place
 router.post('/38125532-3ba8-4019-a7ea-17d88ea3cb32/:id',(req,res)=>{
-    Place.updateOne({_id: req.params.id},{
+    Place.findByIdAndUpdate({_id: req.params.id},{
         status : true
     })
 });
 //delete user
 router.post('/d9bf9936-c269-401e-a811-bb2b19b40be6/:id',(req,res)=>{
-    User.deleteOne({_id: req.params.id})
+    User.findByIdAndRemove({_id: req.params.id})
 });
 
 //get reported post
