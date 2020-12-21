@@ -15,7 +15,8 @@ var storage = multer.diskStorage({
       cb(null, file.originalname)
     } 
   })
-
+  var upload = multer({storage:storage});
+  
 // get all post by user
 router.get('/07f59b0f-31db-4e34-b998-c494a2af9520/:id', async(req, res) => {
     try {
@@ -77,10 +78,10 @@ router.post('/5469597b-3042-4088-a657-599bf3d9b1ba', upload.single('postImage'),
 
 function updateRatingPlace(id){
     try {
-        const place = await Place.findById(id);
+        const place =  Place.findById(id);
         place.rating = place.rating + req.body.rating;
         Place.updateOne({_id: place._id},{
-            rating = place.rating
+            rating : place.rating
         })
     } catch (err) {
         res.send('Error' + err);
@@ -93,16 +94,16 @@ router.post('/075313a0-481a-4a13-9765-3f14ee17b612', async(req, res) => {
         let updateTime = new Date();
         if(req.file){
             Post.updateOne({_id: req.body._id},{
-                image =req.files.filename
+                image  :req.files.filename
             })
         }
         Post.updateOne({_id: req.body._id},{
-            title = req.body.name,  
-            place =req.body.place,
-            content = req.body.content,
-            userPost = req.body.userPost,
-            updateDate = updateTime,
-            rating =req.body.rating,
+            title : req.body.name,  
+            place : req.body.place,
+            content : req.body.content,
+            userPost : req.body.userPost,
+            updateDate : updateTime,
+            rating : req.body.rating,
         })
         res.json({'Sucessful': true });
     }

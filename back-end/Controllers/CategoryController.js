@@ -52,13 +52,13 @@ router.get('/4a2bd1f6-31eb-48c5-a894-8a664423bc01/:id',async(req, res)=>{
 router.post('/0f0ff4fd-c3a6-41ea-927c-6fb058822da5',upload.single('categoryImage'),async(req,res)=>{
     if(req.files){
         Category.updateOne({_id: req.body._id},{
-            name = req.body.name,
-            avatar = req.file.filename
+            name : req.body.name,
+            avatar : req.file.filename
         })
     }
     else{
         Category.updateOne({_id: req.body._id},{
-            name = req.body.name
+            name : req.body.name
         })
     }
     

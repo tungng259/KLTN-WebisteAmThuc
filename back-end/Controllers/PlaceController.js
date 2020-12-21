@@ -78,7 +78,7 @@ router.post('/6f0421d5-4357-49f8-8b24-14f79bea7f33', upload.single('placeAvatar'
 });
 function increaseCategoryNumber(id){
     try {
-        const categories = await Category.findById(id);
+        const categories = Category.findById(id);
         categories.number = categories.number++;
     } catch (err) {
         res.send('Error' + err);
@@ -99,22 +99,22 @@ router.post('/cfc9853d-2866-473d-b274-88d838ea29c1', async(req, res) => {
     try {
         if(req.files){
             Place.updateOne({_id: req.body._id},{
-                image =req.files.filename
+                image : req.files.filename
             })
         }
         if(req.file){
             Place.updateOne({_id: req.body._id},{
-                avatar = req.file.originalname,
+                avatar : req.file.originalname,
             })
         }
         Place.updateOne({_id: req.body._id},{
-            name = req.body.name,
-            address = {
+            name : req.body.name,
+            address : {
                 city: req.body.city,
                 district: req.body.district,
                 address: req.body.address
             },
-            status = true
+            status : true
         })
         res.json({'Sucessful': true });
     }

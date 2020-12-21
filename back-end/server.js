@@ -8,10 +8,12 @@ const admin = require('./Controllers/AdminController');
 
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
 const app = express();
 
 app.use(express.json());
+app.use(bodyParser.json());
 
 app.listen(9000, function() {
     console.log('Server Started');
@@ -19,5 +21,6 @@ app.listen(9000, function() {
 
 app.use('/user', users);
 app.use('/place', places);
-app.use('/category',category);
+app.use('/category',categories);
 app.use('/post',posts);
+app.use('/admin',admin);

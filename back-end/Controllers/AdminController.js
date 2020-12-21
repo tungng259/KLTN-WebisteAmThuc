@@ -18,20 +18,20 @@ router.post('/0508c70f-e907-4d2a-a718-479e6fab5749', async(req, res) => {
 });
 
 //accept post new place
-router.post('/38125532-3ba8-4019-a7ea-17d88ea3cb32',(req,res)=>{
-    Place.updateOne({_id: req.body._id},{
-        status = true
+router.post('/38125532-3ba8-4019-a7ea-17d88ea3cb32/:id',(req,res)=>{
+    Place.updateOne({_id: req.params.id},{
+        status : true
     })
 });
 //delete user
-router.post('/d9bf9936-c269-401e-a811-bb2b19b40be6',(req,res)=>{
-    Place.deleteOne({_id: req.body._id})
+router.post('/d9bf9936-c269-401e-a811-bb2b19b40be6/:id',(req,res)=>{
+    User.deleteOne({_id: req.params.id})
 });
 
 //get reported post
-router.get('/d9bf9936-c269-401e-a811-bb2b19b40be6',(req,res)=>{
+router.get('/7d075fed-f74a-4c94-8897-331430d92514',(req,res)=>{
     var count = User.count();
-    if(count <=10){
+    if(count <=10 ){
         reportedPost = Post.find({reported: { $gte: count/3 } });
     }
     else{

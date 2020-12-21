@@ -4,6 +4,8 @@ const multer = require("multer");
 const User = require("../Modules/users");
 const Follow = require("../Modules/follow");
 
+const bcrypt = require('bcryptjs');
+
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, './uploads/img/user')
@@ -12,7 +14,7 @@ var storage = multer.diskStorage({
       cb(null, file.originalname)
     }
   })
-
+  var upload = multer({storage:storage});
 // get all user
 router.get('/077137bb-22ec-479c-8be3-62dd5c9e599d', async(req, res) => {
     try {
@@ -28,11 +30,13 @@ router.get('/077137bb-22ec-479c-8be3-62dd5c9e599d', async(req, res) => {
 router.post('/6e45ab7f-4ccc-451b-8e8a-fca558df5f0c', async(req, res) => {
     const checkuser = await User.findOne({ username: req.body.username });
     if (checkuser == null) {
+        var hashedpassword = await bcrypt.hash(req.body.password,12)
         var users = new User();
         users.username = req.body.username;
-        users.password = req.body.password;
+        
+        users.password = hashedpassword;
         users.fullname = req.body.fullname;
-        users.folloer = 0;
+        users.follower = 0;
         users.isAdmin = false;
         try {
             users.save();
@@ -49,7 +53,7 @@ router.post('/4b3735b2-533d-4963-9e39-8cb61f3d1198', async(req, res) => {
     const checkuser = await User.findOne({ username: req.body.username });
     if (checkuser == null) {
         res.json({ 'Sucessful': false });
-    } else if (checkuser.password != req.body.password) {
+    } else if (!bcrypt.compare(req.body.password,checkuser.password)) {
         res.json({ 'Sucessful': false });
     } else {
         res.json({ checkuser, 'Sucessful': true });
@@ -71,18 +75,18 @@ router.get('/077137bb-22ec-479c-8be3-62dd5c9e599d/:id', async(req, res) => {
     }
 });
 //update information user
-router.post('/509b6cf0-3996-4853-8e28-1dcd93ac14f2/',upload.single('userImage'), async(req, res) => {
+router.post('/509b6cf0-3996-4853-8e28-1dcd93ac14f2',upload.single('userImage'), async(req, res) => {
     try {
         if(req.file){
             User.updateOne({_id: req.body._id},{
-                avatar = req.file.filename
+                avatar : req.file.filename
             });
         }
         User.updateOne({_id: req.body._id},{
-            username = req.body.username,
-            password = req.body.password,
-            fullname = req.body.fullname,
-            phone = req.body.phone
+            username : req.body.username,
+            password : req.body.password,
+            fullname : req.body.fullname,
+            phone : req.body.phone
         });
         
         res.json({'Sucessful': true });
