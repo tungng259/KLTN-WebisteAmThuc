@@ -54,20 +54,18 @@ router.get('/6f0421d5-4357-49f8-8b24-14f79bea7f33', async(req, res) => {
 });
 
 //post new place
-router.post('/6f0421d5-4357-49f8-8b24-14f79bea7f33', upload.single('placeAvatar'), upload.array('placeImages',12), (req, res) => {
-    var places = new Place(
-        name = req.body.name,
-        avatar = req.file.filename,        
-        address = {
+router.post('/6f0421d5-4357-49f8-8b24-14f79bea7f33', upload.array('placeImages',12), (req, res) => {
+    var places = new Place();
+    places.name = req.body.name,     
+    places.address = {
             city: req.body.city,
             district: req.body.district,
             address: req.body.address
         },
-        image =req.files.filename,
-        categories = req.body.categories,
-        rating =0,
-        status = false
-    );
+        places.image =req.files.filename,
+        places.categories = req.body.categories,
+        places.rating =0,
+        places.status = false
     try {
         places.save();
         increaseCategoryNumber(req.body.categories)
@@ -79,7 +77,7 @@ router.post('/6f0421d5-4357-49f8-8b24-14f79bea7f33', upload.single('placeAvatar'
 function increaseCategoryNumber(id){
     try {
         const categories = Category.findById(id);
-        categories.number = categories.number++;
+        categories.number = ++categories.number;
     } catch (err) {
         res.send('Error' + err);
     }
@@ -88,7 +86,7 @@ function increaseCategoryNumber(id){
 // get place by id
 router.get('/b0146340-5a11-49b5-a2f7-9b31baad0e5c/:id', async(req, res) => {
     try {
-        const place = await Place.findById(req.params.id);
+        const place = await Place.findOne({_id:req.params.id});
         res.json(place);
     } catch (err) {
         res.send('Error' + err);

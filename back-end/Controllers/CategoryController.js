@@ -2,7 +2,6 @@ const express = require("express");
 const multer = require("multer");
 const router = express.Router();
 const Category = require("../Modules/category");
-const places = require("../Modules/places");
 const Place = require("../Modules/places");
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -16,11 +15,10 @@ var upload = multer({storage:storage});
 
 //post new category
 router.post('/70830c14-476d-4ece-b52c-b39e2c4997e4', upload.single('placeImage'), (req, res) => {
-    var categories = new Category(
-        name = req.body.name,
-        avatar = req.file.originalname,
-        number = 0
-    );
+    var categories = new Category();
+    categories.name = req.body.name;
+    categories.avatar = req.file.originalname;
+    categories.number = 0;
     
     try {
         categories.save();
@@ -33,7 +31,7 @@ router.post('/70830c14-476d-4ece-b52c-b39e2c4997e4', upload.single('placeImage')
 //get category
 router.get('/fc82d78d-ee17-4b3e-8233-e2e074b629ec', async(req, res) => {
     try {
-        const categories = await category.find();
+        var categories = await Category.find();
         res.json(categories);
     } catch (err) {
         res.send('Error' + err);

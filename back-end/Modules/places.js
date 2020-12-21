@@ -13,10 +13,6 @@ var placeSchema = new mongoose.Schema({
         type: JSON,
         required: true
     },
-    avatar: {
-        type: String,
-        required: true
-    },
     categories:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'category'

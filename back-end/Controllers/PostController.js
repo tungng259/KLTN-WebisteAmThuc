@@ -16,12 +16,12 @@ var storage = multer.diskStorage({
     } 
   })
   var upload = multer({storage:storage});
-  
+
 // get all post by user
 router.get('/07f59b0f-31db-4e34-b998-c494a2af9520/:id', async(req, res) => {
     try {
-        const posts = await Post.find({user:id, status:true});
-        res.json(places);
+        const posts = await Post.find({user:req.params.id, status:true});
+        res.json(posts);
     } catch (err) {
         res.send('Error' + err);
     }
@@ -30,7 +30,7 @@ router.get('/07f59b0f-31db-4e34-b998-c494a2af9520/:id', async(req, res) => {
 //get all post by place
 router.get('/6f65f910-b4c7-4276-9410-dbb46b1f7ad6/:id', async(req, res) => {
     try {
-        const posts = await Post.find({place:id, status:true});
+        const posts = await Post.find({place:req.params.id, status:true});
         res.json(places);
     } catch (err) {
         res.send('Error' + err);
@@ -56,17 +56,16 @@ router.get('/4911b499-bc8a-42a9-8cf0-34b1dd7f3c71/:id', async(req, res) => {
 //create new post
 router.post('/5469597b-3042-4088-a657-599bf3d9b1ba', upload.single('postImage'), (req, res) => {
     let postTime = new Date();
-    var post = new Post(
-        title = req.body.name,
-        image = req.file.filename,    
-        place =req.body.place,
-        content = req.body.content,
-        userPost = req.body.userPost,
-        postDate = postTime,
-        rating =req.body.rating,
-        like = 0,
-        reported = 0
-    );
+    var post = new Post();
+    post.title = req.body.name,
+    post.image = req.file.filename,    
+    post.place =req.body.place,
+    post.content = req.body.content,
+    post.userPost = req.body.userPost,
+    post.postDate = postTime,
+    post.rating =req.body.rating,
+    post.like = 0,
+    post.reported = 0
     try {
         updateRatingPlace(req.body.place);
         post.save();
@@ -76,10 +75,12 @@ router.post('/5469597b-3042-4088-a657-599bf3d9b1ba', upload.single('postImage'),
     }
 });
 
-function updateRatingPlace(id){
+function updateRatingPlace(id,rating){
     try {
         const place =  Place.findById(id);
-        place.rating = place.rating + req.body.rating;
+        const sum = place.rating + rating;
+        const count = Post.count({place:id});
+        place.rating = sum/count;
         Place.updateOne({_id: place._id},{
             rating : place.rating
         })
@@ -133,11 +134,10 @@ function increaseLikePost(id_User,id_Post){
     var post = Post.findOne({_id:id_Post});
     var count = post.like;
     Post.findByIdAndUpdate(id_Post,{like: ++count});
-    const like = new Like(
-        id_user = id_User,
-        id_post = id_Post
-    )
-    Like.save();
+    const likes = new Like();
+    likes.id_user = id_User,
+    likes.id_post = id_Post
+    likes.save();
 }
 
 function decreaseLikePost(id_User,id_Post){
