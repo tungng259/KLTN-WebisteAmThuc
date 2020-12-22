@@ -19,6 +19,11 @@ router.post('/0508c70f-e907-4d2a-a718-479e6fab5749', async(req, res) => {
         res.json({ checkuser, 'Sucessful': true });
     }
 });
+//delete user
+router.post('/d9bf9936-c269-401e-a811-bb2b19b40be6',async(req,res)=>{
+    await User.findOneAndDelete({_id: req.body.id});
+    res.json({"Result":"Delete Successful"});
+});
 // get all place need be accepted
 router.get('/9498b701-7324-4825-b5b2-895bc471ec78', async(req, res) => {
     try {
@@ -32,13 +37,8 @@ router.get('/9498b701-7324-4825-b5b2-895bc471ec78', async(req, res) => {
 router.post('/38125532-3ba8-4019-a7ea-17d88ea3cb32',async(req,res)=>{
     await Place.findOneAndUpdate({_id: req.body.id},{
         status : true
-    })
+    });
     res.json(Place.findOne({_id: req.body.id}));
-});
-//delete user
-router.post('/d9bf9936-c269-401e-a811-bb2b19b40be6',async(req,res)=>{
-    await User.findOneAndDelete({_id: req.body.id})
-    res.json({"Result":"Delete Successful"});
 });
 
 //get reported post

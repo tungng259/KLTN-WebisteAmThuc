@@ -18,9 +18,9 @@ var storage = multer.diskStorage({
   var upload = multer({storage:storage});
 
 // get all post by user
-router.get('/07f59b0f-31db-4e34-b998-c494a2af9520/:id', async(req, res) => {
+router.get('/07f59b0f-31db-4e34-b998-c494a2af9520', async(req, res) => {
     try {
-        const posts = await Post.find({user:req.params.id, status:true});
+        const posts = await Post.find({userPost:req.body.id});
         res.json(posts);
     } catch (err) {
         res.send('Error' + err);
@@ -28,10 +28,10 @@ router.get('/07f59b0f-31db-4e34-b998-c494a2af9520/:id', async(req, res) => {
 });
 
 //get all post by place
-router.get('/6f65f910-b4c7-4276-9410-dbb46b1f7ad6/:id', async(req, res) => {
+router.get('/6f65f910-b4c7-4276-9410-dbb46b1f7ad6', async(req, res) => {
     try {
-        const posts = await Post.find({place:req.params.id, status:true});
-        res.json(places);
+        const posts = await Post.find({place:req.body.id});
+        res.json(posts);
     } catch (err) {
         res.send('Error' + err);
     }
@@ -40,7 +40,7 @@ router.get('/6f65f910-b4c7-4276-9410-dbb46b1f7ad6/:id', async(req, res) => {
 //get one post (detail post)
 router.get('/4911b499-bc8a-42a9-8cf0-34b1dd7f3c71/:id', async(req, res) => {
     try {
-        const post = await Post.findOne({_id:id, status:true});
+        const post = await Post.findOne({_id:req.params.id, status:true});
         if(req.body.id_user != null){
             var result = checkliked(post._id,req.body.id_user);
             res.json(post, {isLiked : result});
@@ -57,7 +57,7 @@ router.get('/4911b499-bc8a-42a9-8cf0-34b1dd7f3c71/:id', async(req, res) => {
 router.post('/5469597b-3042-4088-a657-599bf3d9b1ba', upload.single('postImage'), (req, res) => {
     let postTime = new Date();
     var post = new Post();
-    post.title = req.body.name,
+    post.title = req.body.title,
     post.image = req.file.filename,    
     post.place =req.body.place,
     post.content = req.body.content,
@@ -99,7 +99,7 @@ router.post('/075313a0-481a-4a13-9765-3f14ee17b612', async(req, res) => {
             })
         }
         Post.updateOne({_id: req.body._id},{
-            title : req.body.name,  
+            title : req.body.title,  
             place : req.body.place,
             content : req.body.content,
             userPost : req.body.userPost,
