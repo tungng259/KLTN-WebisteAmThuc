@@ -24,6 +24,12 @@ export default withRouter(function App({ location }) {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const [id,setID]=useState("");
+
+  const getid=useCallback(props => {
+    setID(props)
+  },[]);
+  
   const login = useCallback(() => {
     setIsLoggedIn(true);
   }, []);
@@ -86,7 +92,7 @@ export default withRouter(function App({ location }) {
     
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn: isLoggedIn, login: login, logout: logout }}
+      value={{ id:id,isLoggedIn: isLoggedIn, login: login, logout: logout,getid:getid }}
     >
       <Header/>
       <div>                

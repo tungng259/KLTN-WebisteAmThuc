@@ -1,12 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import "./index.css";
-
+import { AuthContext } from "../Auth/auth-context";
 import post from "./Images/post.jpg";
+
 
 const Index = () => {
   const [showForm, setShowForm] = useState(true);
   const [showCancel, setShowCancel] = useState("cancel");
+  const auth = useContext(AuthContext);
+  const [data,setData]=useState({
+    username:"",
+  });
+
+  useEffect(() => {
+    const sendRequest = async () => {
+      try {
+        const response = await fetch("http://localhost:9000/user/077137bb-22ec-479c-8be3-62dd5c9e599d/"+auth.id);
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(responseData.message);
+        }
+        await setData(
+          {...data,username: responseData.username}
+        );
+        console.log("Sucessful",data);
+        console.log("Thanh cong",responseData.username);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    sendRequest();
+  }, []);
 
   let form = "";
   let value = "";
@@ -17,7 +44,7 @@ const Index = () => {
         <div className="box">
           <div className="text">
             <h3>Username</h3>
-            <p>vfood123</p>
+            <p>VFood</p>
           </div>
         </div>
         <div className="box">
