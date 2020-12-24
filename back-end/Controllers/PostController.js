@@ -38,9 +38,9 @@ router.get('/6f65f910-b4c7-4276-9410-dbb46b1f7ad6', async(req, res) => {
 });
 
 //get one post (detail post)
-router.get('/4911b499-bc8a-42a9-8cf0-34b1dd7f3c71/:id', async(req, res) => {
+router.get('/4911b499-bc8a-42a9-8cf0-34b1dd7f3c71', async(req, res) => {
     try {
-        const post = await Post.findOne({_id:req.params.id, status:true});
+        const post = await Post.findOne({_id:req.body.id});
         if(req.body.id_user != null){
             var result = checkliked(post._id,req.body.id_user);
             res.json(post, {isLiked : result});
@@ -64,6 +64,7 @@ router.post('/5469597b-3042-4088-a657-599bf3d9b1ba', upload.single('postImage'),
     post.userPost = req.body.userPost,
     post.postDate = postTime,
     post.rating =req.body.rating,
+    post.updateDate = null,
     post.like = 0,
     post.reported = 0
     try {
@@ -94,18 +95,17 @@ router.post('/075313a0-481a-4a13-9765-3f14ee17b612', async(req, res) => {
     try {
         let updateTime = new Date();
         if(req.file){
-            Post.updateOne({_id: req.body._id},{
+            Post.findOneAndUpdate({_id: req.body._id},{
                 image  :req.files.filename
             })
         }
-        Post.updateOne({_id: req.body._id},{
+        Post.findOneAndUpdate({_id: req.body._id},{
             title : req.body.title,  
             place : req.body.place,
             content : req.body.content,
-            userPost : req.body.userPost,
             updateDate : updateTime,
             rating : req.body.rating,
-        })
+        });
         res.json({'Sucessful': true });
     }
     catch (err) {
