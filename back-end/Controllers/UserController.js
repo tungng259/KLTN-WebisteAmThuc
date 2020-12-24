@@ -28,35 +28,39 @@ router.get('/077137bb-22ec-479c-8be3-62dd5c9e599d', async(req, res) => {
 
 //add user (Sign-up)
 router.post('/6e45ab7f-4ccc-451b-8e8a-fca558df5f0c', async(req, res) => {
-    const checkuser = await User.findOne({ username: req.body.username });
-    if (checkuser == null) {
-        var hashedpassword = await bcrypt.hash(req.body.password,12)
-        var users = new User();
-        users.username = req.body.username;
-        
-        users.password = hashedpassword;
-        users.fullname = req.body.fullname;
-        users.follower = 0;
-        users.isAdmin = false;
-        try {
-            users.save();
-            res.json({ users, 'Sucessful': true });
-        } catch (err) {
-            res.json({ 'Error': err });
+    if(req.body.password != req.body.confirmpassword){
+        res.json({'Result':"Confirm Password does not match"});
+    }else{
+        const checkuser = await User.findOne({ username: req.body.username });
+        if (checkuser == null) {
+            var hashedpassword = await bcrypt.hash(req.body.password,12)
+            var users = new User();
+            users.username = req.body.username;
+            
+            users.password = hashedpassword;
+            users.fullname = req.body.fullname;
+            users.follower = 0;
+            users.isAdmin = false;
+            try {
+                users.save();
+                res.json({ users, 'Sucessful': true });
+            } catch (err) {
+                res.json({ 'Error': err });
+            }
+        } else {
+            res.json({ 'Sucessful': false });
         }
-    } else {
-        res.json({ 'Sucessful': false });
     }
 });
 //Authentication (Sign-in)
 router.post('/4b3735b2-533d-4963-9e39-8cb61f3d1198', async(req, res) => {
     const checkuser = await User.findOne({ username: req.body.username });
-    if (checkuser == null) {
+    if (checkuser == null)  {
         res.json({ 'Sucessful': false });
-    } else if (!bcrypt.compare(req.body.password,checkuser.password)) {
-        res.json({ 'Sucessful': false });
-    } else {
+    } else if(await bcrypt.compare(req.body.password,checkuser.password)== true){
         res.json({ checkuser, 'Sucessful': true });
+    }else{
+        res.json({ 'Sucessful': false });
     }
 });
 // get user by id
