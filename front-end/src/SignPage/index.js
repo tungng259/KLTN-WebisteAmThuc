@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
+
+import { AuthContext } from "../Auth/auth-context";
 
 import "./index.css";
 
@@ -8,10 +10,10 @@ import signup from "./Images/img2.png";
 const Index = () => {
   const [showDefault, setShowDefault] = useState(true);
   const [showForm, setShowForm] = useState("container");
-
   const formController = () => {
     setShowDefault(!showDefault);
   };
+  const auth = useContext(AuthContext);
 
   useEffect(() => {
     if (showDefault) {
@@ -21,21 +23,25 @@ const Index = () => {
     }
   });
 
+  const authSumbitHandler=event => {
+    event.preventDefault();
+    auth.login();
+  }
   return (
     <React.Fragment>
       <section id="signpage">
-        <div class={showForm}>
-          <div class="user signinBx">
-            <div class="imgBx">
+        <div className={showForm}>
+          <div className="user signinBx">
+            <div className="imgBx">
               <img src={signin} />
             </div>
-            <div class="formBx">
+            <div className="formBx">
               <form>
                 <h2>Sign In</h2>
                 <input type="text" name="" placeholder="Username" />
                 <input type="password" name="" placeholder="Password" />
-                <input type="submit" name="" value="Login" />
-                <p class="signup">
+                <input type="submit" name="" value="Login" onClick={authSumbitHandler} />
+                <p className="signup">
                   don't have an account?{" "}
                   <a href="#" onClick={formController}>
                     Sign up.
@@ -44,8 +50,8 @@ const Index = () => {
               </form>
             </div>
           </div>
-          <div class="user signupBx">
-            <div class="formBx">
+          <div className="user signupBx">
+            <div className="formBx">
               <form>
                 <h2>Create an account</h2>
                 <input type="text" name="" placeholder="Username" />
@@ -53,7 +59,7 @@ const Index = () => {
                 <input type="password" name="" placeholder="Create Password" />
                 <input type="password" name="" placeholder="Confirm Password" />
                 <input type="submit" name="" value="Sign up" />
-                <p class="signup">
+                <p className="signup">
                   Already have an account?{" "}
                   <a href="#" onClick={formController}>
                     Sign in.
@@ -61,7 +67,7 @@ const Index = () => {
                 </p>
               </form>
             </div>
-            <div class="imgBx">
+            <div className="imgBx">
               <img src={signup} />
             </div>
           </div>

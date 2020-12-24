@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,  useCallback } from "react";
 import {
   BrowserRouter as Router,
   Route,
   Redirect,
   Switch,
+  withRouter,
 } from "react-router-dom";
-import logo from "./logo.svg";
 import "./App.css";
 
 import { AuthContext } from "./Auth/auth-context";
-
 
 import LandingPage from "./LandingPage/index.js";
 import HomePage from "./HomePage/index.js";
@@ -20,15 +19,30 @@ import AccountPage from "./AccountPage/index.js";
 import NewPostPage from "./NewPostPage/index.js";
 import Header from "./Header/index.js";
 
-function App() {
+export default withRouter(function App({ location }) {
+  const [currentPath, setCurrentPath] = useState(location.pathname);
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const login = useCallback(() => {
+    setIsLoggedIn(true);
+  }, []);
+
+  const logout = useCallback(() => {
+    setIsLoggedIn(false);
+  }, []);
+
+  useEffect(() => {
+    const { pathname } = location;
+    setCurrentPath(pathname);
+  }, [window.location.pathname]);
+
   let routes;
-  routes = (
-    <Switch>
+  if(isLoggedIn){
+    routes=(
+    <React.Fragment>
       <Route path="/" exact>
         <LandingPage />
-      </Route>
-      <Route path="/sign" exact>
-        <SignPage />
       </Route>
       <Route path="/contact" exact>
         <ContactPage />
@@ -45,18 +59,41 @@ function App() {
       <Route path="/index" exact>
         <HomePage />
       </Route>
+      <Redirect to="/index" />
+    </React.Fragment>);
+  }
+  else{
+    routes=( <React.Fragment>
+      <Route path="/" exact>
+        <LandingPage />
+      </Route>
+      <Route path="/sign" exact>
+        <SignPage />
+      </Route>
+      <Route path="/contact" exact>
+        <ContactPage />
+      </Route>
+      <Route path="/menu" exact>
+        <MenuPage />
+      </Route>
+      <Route path="/index" exact>
+        <HomePage />
+      </Route>
       <Redirect to="/" />
-    </Switch>
-  );
+      </React.Fragment>);
+  }
 
+    
   return (
-    <Router>
+    <AuthContext.Provider
+      value={{ isLoggedIn: isLoggedIn, login: login, logout: logout }}
+    >
       <Header/>
-      <div>
-        {routes}
+      <div>                
+        <Switch>
+          {routes}
+        </Switch> 
       </div>
-    </Router>
+    </AuthContext.Provider>
   );
-}
-
-export default App;
+});

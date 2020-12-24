@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useContext} from "react";
 
 import "./index.css";
 
@@ -24,7 +24,7 @@ const Index = () => {
             <textarea placeholder="Message"></textarea>
           </div>
           <div class="inputBx">
-            <input type="submit" value="Send" />
+            <input type="submit" value="Send"/>
           </div>
         </div>
       </section>

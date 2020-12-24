@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { NavLink,withRouter } from "react-router-dom";
 
 import "./index.css";
+import NavLinks from "./nav-link"; 
 
-const Index = () => {
+export default withRouter(function Index({ location }) {
+  const [currentPath, setCurrentPath] = useState(location.pathname); 
   const [showDefault, setShowDefault] = useState("");
-  const [showForm, setShowForm] = useState(true);
-
+  const { pathname } = location;
   let banner = "";
-  if (showForm === true) {
+  if (pathname==="/index") {
     banner = (
       <section className="banner" id="banner">
         <div className="content">
@@ -27,16 +28,17 @@ const Index = () => {
   }
 
   useEffect(() => {
-    if (window.location.pathname !== "/index") {
-      setShowForm(false);
+    setCurrentPath(pathname);
+    if (pathname==="/index") 
+      setShowDefault("");
+    if (pathname!=="/index")
       setShowDefault("sticky");
-    } else {
-      setShowForm(true);
-    }
-  });
+    if(pathname==="/")
+      setShowDefault("invisible");
+  }, [window.location.pathname]);
 
   window.addEventListener("scroll", function () {
-    if (showForm === true) {
+    if (pathname==="/index") {
       if (window.scrollY > 0) {
         setShowDefault("sticky");
       } else {
@@ -50,7 +52,6 @@ const Index = () => {
   };
 
   return (
-    <React.Fragment>
       <div id="header">
         <header className={showDefault}>
           <NavLink to="/index" exact className="logo" onClick={homeController}>
@@ -77,22 +78,10 @@ const Index = () => {
                 Home
               </NavLink>
             </li>
-            <li>
-              <NavLink to="/newpost" exact className="menu-link">
-                New Post
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/sign" exact className="menu-link">
-                Sign in
-              </NavLink>
-            </li>
+             <NavLinks/>
           </ul>
         </header>
         {banner}
       </div>
-    </React.Fragment>
   );
-};
-
-export default Index;
+});
