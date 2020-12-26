@@ -28,7 +28,7 @@ router.get('/077137bb-22ec-479c-8be3-62dd5c9e599d', async(req, res) => {
 
 //add user (Sign-up)
 router.post('/6e45ab7f-4ccc-451b-8e8a-fca558df5f0c', async(req, res) => {
-    if(req.body.password != req.body.confirmpassword){
+    if(await req.body.password != req.body.confirmpassword){
         res.json({'Result':"Confirm Password does not match"});
     }else{
         const checkuser = await User.findOne({ username: req.body.username });
@@ -79,16 +79,16 @@ router.get('/077137bb-22ec-479c-8be3-62dd5c9e599d/:id', async(req, res) => {
     }
 });
 //update information user
-router.post('/509b6cf0-3996-4853-8e28-1dcd93ac14f2',upload.single('userImage'), async(req, res) => {
+router.post('/509b6cf0-3996-4853-8e28-1dcd93ac14f2/:id',upload.single('userImage'), async(req, res) => {
     try {
+        const user = await User.findById(req.params.id);
         if(req.file){
-            User.updateOne({_id: req.body._id},{
+            User.findByIdAndUpdate(req.params.id,{
                 avatar : req.file.filename
             });
         }
-        User.updateOne({_id: req.body._id},{
+        User.findByIdAndUpdate(req.params.id,{
             username : req.body.username,
-            password : req.body.password,
             fullname : req.body.fullname,
             phone : req.body.phone
         });
@@ -98,7 +98,15 @@ router.post('/509b6cf0-3996-4853-8e28-1dcd93ac14f2',upload.single('userImage'), 
         res.send('Error' + err);
     }
 });
-
+//restore password
+router.post('/e0c48bcf-db97-4c31-82f1-e87ecc9e58c8/:id', async(req,res)=>{
+    try{
+        var hashedpassword = await bcrypt.hash(req.body.password,12);
+        User.findOneAndUpdate(req.params.id,{password:hashedpassword});
+    }catch(err){
+        res.send('Error' + err);
+    }
+});
 //follow-unfollow user
 router.post('/26828687-b3e0-431b-9226-55fb3a857bef', async(req, res) => {
     try {

@@ -9,11 +9,13 @@ const admin = require('./Controllers/AdminController');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require("cors");
 
 const app = express();
 
 app.use(express.json());
 app.use(bodyParser.json());
+app.use(cors());
 
 app.listen(9000, function() {
     console.log('Server Started');
