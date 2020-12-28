@@ -1,3 +1,4 @@
+require('dotenv').config();
 const db = require('./database');
 
 const users = require('./Controllers/UserController');
@@ -12,12 +13,19 @@ const bodyParser = require('body-parser');
 const cors = require("cors");
 
 const app = express();
+var session = require('express-session');
+
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true
+}));
 
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors());
 
-app.listen(9000, function() {
+app.listen(process.env.PORT, function() {
     console.log('Server Started');
 });
 

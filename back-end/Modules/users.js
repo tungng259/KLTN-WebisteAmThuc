@@ -37,6 +37,9 @@ var userSchema = new mongoose.Schema({
     },
     isAdmin:{
         type:Boolean
+    },
+    resetPasswordToken:{
+        type:String
     }
 });
 
