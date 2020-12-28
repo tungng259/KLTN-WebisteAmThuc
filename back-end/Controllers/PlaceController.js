@@ -26,7 +26,7 @@ router.get('/699f071e-f8c7-40a3-8bfa-0ace8bac87e4', async(req, res) => {
 // search place by name
 router.post('/aee1266f-b0e0-4c55-ba53-c1589c8565dd', async(req, res) => {
     try {
-        const places = await Place.find({ name: req.body.name, status: true });
+        const places = await Place.find({ name: new RegExp(req.body.name), status: true });
         res.json(places);
     } catch (err) {
         res.send('Error' + err);
@@ -38,16 +38,16 @@ router.post('/6f0421d5-4357-49f8-8b24-14f79bea7f33', async(req, res) => {
     //search place by name & region
     if(req.body.name){
         try {
-            const places = await Place.find({ name: req.body.name, address: { city: req.body.city, district: req.body.district }, name: req.body.name, status : true });
+            const places = await Place.find({ name: new RegExp(req.body.name) , address: { city: req.body.city, district: req.body.district }, name: req.body.name, status : true });
             res.json(places);
         } catch (err) {
             res.send('Error' + err);
         }
     }
-    // search place by name
+    // search place by region
     else{
         try {
-            const places = await Place.find({ address: { city: req.body.city, district: req.body.district }, name: req.body.name, status : true });
+            const places = await Place.find({ address: { city: req.body.city, district: req.body.district }, status : true });
             res.json(places);
         } catch (err) {
             res.send('Error' + err);
