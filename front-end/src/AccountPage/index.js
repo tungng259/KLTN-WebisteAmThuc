@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import { NavLink } from "react-router-dom";
 
 import "./index.css";
 import { AuthContext } from "../Auth/auth-context";
@@ -11,7 +12,14 @@ const Index = () => {
   const auth = useContext(AuthContext);
   const [data,setData]=useState({
     username:"",
+    fullname:"",
+    email:"",
+    phone:"",
+    birthday:"",
+    gender:"",
+    country:"",
   });
+  const [datapost,setPost] = useState("");
 
   useEffect(() => {
     const sendRequest = async () => {
@@ -23,18 +31,35 @@ const Index = () => {
         if (!response.ok) {
           throw new Error(responseData.message);
         }
-        await setData(
-          {...data,username: responseData.username}
-        );
+        await setData(responseData);
         console.log("Sucessful",data);
-        console.log("Thanh cong",responseData.username);
+        console.log("Thanh cong",responseData);
       } catch (err) {
         console.log(err);
       }
     };
     sendRequest();
+
+    const sendRequestPost = async ()=>{      
+      try {
+         const response = await fetch("http://localhost:9000/post/07f59b0f-31db-4e34-b998-c494a2af9520/"+auth.id);
+        
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(responseData.message);
+        }
+        await setPost(responseData);
+        console.log("a",responseData);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    sendRequestPost();
   }, []);
 
+
+  
   let form = "";
   let value = "";
   if (showForm) {
@@ -43,38 +68,38 @@ const Index = () => {
       <div className="info">
         <div className="box">
           <div className="text">
-            <h3>Username</h3>
-            <p>VFood</p>
+            <h3>Full name</h3>
+            <p>{data.fullname}</p>
           </div>
         </div>
         <div className="box">
           <div className="text">
             <h3>Email address</h3>
-            <p>vfood@gmail.com</p>
+            <p>{data.email}</p>
           </div>
         </div>
         <div className="box">
           <div className="text">
             <h3>Phone</h3>
-            <p>012-345-6789</p>
+            <p>{data.phone}</p>
           </div>
         </div>
         <div className="box">
           <div className="text">
             <h3>Birthday</h3>
-            <p>31/12/2020</p>
+            <p>{data.birthday}</p>
           </div>
         </div>
         <div className="box">
           <div className="text">
             <h3>Gender</h3>
-            <p>Male</p>
+            <p>{data.gender?"Man":"Woman"}</p>
           </div>
         </div>
         <div className="box">
           <div className="text">
             <h3>Country/Region</h3>
-            <p>Ho Chi Minh</p>
+            <p>{data.country}</p>
           </div>
         </div>
       </div>
@@ -86,46 +111,51 @@ const Index = () => {
         <form>
           <div className="item">
             <h3>Full name</h3>
-            <input type="text" name="" placeholder="Full Name" value="VFood" />
+            <input type="text" id="fullname" placeholder="Full Name" value={data.fullname} onChange={e => setData({...data, fullname: e.target.value })}/>
           </div>
           <div className="item">
             <h3>Email address</h3>
             <input
               type="email"
-              name=""
+              id="email"
               placeholder="Email"
-              value="vfood@gmail.com"
+              value={data.email}
+              onChange={e => setData({...data, email: e.target.value })}
             />
           </div>
           <div className="item">
             <h3>Phone</h3>
             <input
               type="text"
-              name=""
+              id="phone"
               placeholder="Phone"
-              value="012-345-6789"
+              value={data.phone}
+              onChange={e => setData({...data, phone: e.target.value })}
             />
           </div>
           <div className="item">
             <h3>Birthday</h3>
             <input
               type="text"
-              name=""
+              id="birthday"
               placeholder="Birthday"
-              value="31/12/2020"
+              value={data.birthday}
+              onChange={e => setData({...data, birthday: e.target.value })}
             />
           </div>
           <div className="item">
             <h3>Gender</h3>
-            <input type="text" name="" placeholder="Gender" value="Male" />
+            <input type="text" id="gender" placeholder="Gender" value={data.gender}
+            onChange={e => setData({...data, gender: e.target.value})}/>
           </div>
           <div className="item">
             <h3>Country/Region</h3>
             <input
               type="text"
-              name=""
+              id="country"
               placeholder="Country/Region"
-              value="Ho Chi Minh"
+              value={data.country}
+              onChange={e => setData({...data, country: e.target.value })}
             />
           </div>
         </form>
@@ -141,8 +171,38 @@ const Index = () => {
     }
   });
 
+
   const formController = () => {
     setShowForm(!showForm);
+    if(showForm===false) {
+    const editHandler = async () => {
+    try {
+        const response = await fetch('http://localhost:9000/user/509b6cf0-3996-4853-8e28-1dcd93ac14f2/'+auth.id, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            username : data.username,
+            fullname : data.fullname,
+            email:data.email,
+            phone : document.getElementById("phone").value,
+            birthday : document.getElementById("birthday").value,
+            gender: document.getElementById("gender").value,
+            country: document.getElementById("country").value
+          })
+        });
+
+        const responseData = await response.json();
+        if (!response.ok) {
+          throw new Error(responseData.message);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+  };
+    editHandler();
+    }
   };
 
   let account_info = (
@@ -152,7 +212,7 @@ const Index = () => {
       </h2>
       <div className="content">
         <div className="account_info">
-          <h3 className="name">VFood</h3>
+          <h3 className="name">{data.username}</h3>
           {form}
         </div>
         <div className="btn">
@@ -162,7 +222,29 @@ const Index = () => {
       </div>
     </section>
   );
-  let posts = (
+
+
+  let posts = "";
+  var count = Object.keys(datapost).length;
+  if (count === 0) {
+    posts = (
+      <section id="post">
+      <div className="title">
+        <h2 className="titleText">
+          Your <span>P</span>ost
+        </h2>
+        <p>No places found. Maybe create one?</p>
+        <div className="btn">
+          <NavLink to="/newpost" exact>
+              <input type="submit" value="Create One"/>
+           </NavLink>
+        </div>
+      </div>
+      </section>
+    );
+  }
+  else{
+  posts=(
     <section id="post">
       <div className="title">
         <h2 className="titleText">
@@ -171,49 +253,18 @@ const Index = () => {
         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
       </div>
       <div className="content">
-        <div className="box">
+        {Object.keys(datapost).map(yourpost=>(<div className="box">
           <div className="imgBx">
             <img src={post} />
           </div>
           <div className="text">
-            <h3>Food1</h3>
+            <h3>{datapost[yourpost].content}</h3>
           </div>
+        </div>))}
         </div>
-        <div className="box">
-          <div className="imgBx">
-            <img src={post} />
-          </div>
-          <div className="text">
-            <h3>Food2</h3>
-          </div>
-        </div>
-        <div className="box">
-          <div className="imgBx">
-            <img src={post} />
-          </div>
-          <div className="text">
-            <h3>Food3</h3>
-          </div>
-        </div>
-        <div className="box">
-          <div className="imgBx">
-            <img src={post} />
-          </div>
-          <div className="text">
-            <h3>Food4</h3>
-          </div>
-        </div>
-        <div className="box">
-          <div className="imgBx">
-            <img src={post} />
-          </div>
-          <div className="text">
-            <h3>Food5</h3>
-          </div>
-        </div>
-      </div>
     </section>
   );
+  }
 
   return (
     <React.Fragment>

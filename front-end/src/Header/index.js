@@ -38,13 +38,13 @@ export default withRouter(function Index({ location }) {
   }, [window.location.pathname]);
 
   window.addEventListener("scroll", function () {
-    if (pathname==="/index") {
-      if (window.scrollY > 0) {
+    if(pathname!=="/index")
+      setShowDefault("sticky");
+    else
+      {if (window.scrollY > 0) 
         setShowDefault("sticky");
-      } else {
-        setShowDefault("");
-      }
-    }
+      else 
+        setShowDefault("");    }
   });
 
   const homeController = () => {

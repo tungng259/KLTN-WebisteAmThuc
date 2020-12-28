@@ -26,7 +26,10 @@ const Index = () => {
 
   const [username,setUsername] = useState('');
   const [password,setPassword] = useState('');
+   const [username2,setUsername2] = useState('');
+  const [password2,setPassword2] = useState('');
   const [fullname,setFullName] = useState('');
+  const [email,setEmail] = useState('');
   const [comfirmpassword,setComfirmPassword] = useState('');
 
   const [isOpen, setIsOpen] = useState(false);
@@ -78,24 +81,47 @@ const Index = () => {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            username: username,
+            username: username2,
             fullname: fullname,
-            password: password,
+            email:email,
+            password: password2,
             confirmpassword: comfirmpassword
           })
         });
-
         const responseData = await response.json();
         if (!response.ok) {
           throw new Error(responseData.message);
         }
-        console.log(password);
-        console.log(comfirmpassword);
-        console.log(responseData)
         if(responseData.Sucessful)
         {
+          try {
+        const response2 = await fetch('http://localhost:9000/user/4b3735b2-533d-4963-9e39-8cb61f3d1198', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            username: username2,
+            password: password2
+          })
+        });
+
+        const responseData2 = await response2.json();
+        if (!response2.ok) {
+          throw new Error(responseData2.message);
+        }
+        console.log(responseData2)
+        if(responseData2.Sucessful)
+        {
           auth.login();
-          auth.getid(responseData.checkuser._id);
+          auth.getid(responseData2.checkuser._id);
+        }
+        else{
+          togglePopup();
+        }
+      } catch (err) {
+        console.log(err);
+      }
         }
         else{
           togglePopup();
@@ -139,9 +165,10 @@ const Index = () => {
             <div className="formBx">
               <form>
                 <h2>Create an account</h2>
-                <input type="text" name="" placeholder="Username" onChange={event=>setUsername(event.target.value)}/>
+                <input type="text" name="" placeholder="Username" onChange={event=>setUsername2(event.target.value)}/>
                 <input type="fullname" name="" placeholder="Full Name" onChange={event=>setFullName(event.target.value)}/>
-                <input type="password" name="" placeholder="Create Password" onChange={event=>setPassword(event.target.value)}/>
+                <input type="email" name="" placeholder="Email" onChange={event=>setEmail(event.target.value)}/>
+                <input type="password" name="" placeholder="Create Password" onChange={event=>setPassword2(event.target.value)}/>
                 <input type="password" name="" placeholder="Confirm Password" onChange={event=>setComfirmPassword(event.target.value)}/>
                 <input type="submit" name="" value="Sign up" onClick={signupHandler}/>
                 <p className="signup">

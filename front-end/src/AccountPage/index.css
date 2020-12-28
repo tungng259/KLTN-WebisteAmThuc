@@ -115,7 +115,8 @@
   text-decoration: none;
   text-align: center;
 }
-#account .btn input[type="submit"] {
+#account .btn input[type="submit"],
+#post .btn input[type="submit"] {
   background: #677eff;
 }
 #account .btn input[type="cancel"] {
@@ -185,4 +186,28 @@
 #post .content .box .text h3 {
   font-weight: 400;
   color: #111;
+  text-align: center;
+}
+#post .btn {
+  justify-content: space-between;
+}
+#post .btn input {
+  padding: 4px;
+  font-size: 16px;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  color: #fff;
+  min-width: 160px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-right: 5px;
+  text-decoration: none;
+  text-align: center;
+}
+#post .btn input[type="submit"]:hover {
+  letter-spacing: 4px;
+  min-width: 200px;
 }
