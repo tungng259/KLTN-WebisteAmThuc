@@ -35,10 +35,15 @@ router.get('/9498b701-7324-4825-b5b2-895bc471ec78', async(req, res) => {
 });
 //accept post new place
 router.post('/38125532-3ba8-4019-a7ea-17d88ea3cb32',async(req,res)=>{
-    await Place.findOneAndUpdate({_id: req.body.id},{
+    try{
+        await Place.findOneAndUpdate({_id: req.body.id},{
         status : true
     });
     res.json(Place.findOne({_id: req.body.id}));
+    }
+    catch (err){
+        res.send('Error' + err);
+    }
 });
 
 //get reported post

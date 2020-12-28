@@ -24,7 +24,7 @@ router.get('/699f071e-f8c7-40a3-8bfa-0ace8bac87e4', async(req, res) => {
     }
 });
 // search place by name
-router.get('/aee1266f-b0e0-4c55-ba53-c1589c8565dd', async(req, res) => {
+router.post('/aee1266f-b0e0-4c55-ba53-c1589c8565dd', async(req, res) => {
     try {
         const places = await Place.find({ name: req.body.name, status: true });
         res.json(places);
@@ -34,7 +34,7 @@ router.get('/aee1266f-b0e0-4c55-ba53-c1589c8565dd', async(req, res) => {
 });
 
 // search place by region
-router.get('/6f0421d5-4357-49f8-8b24-14f79bea7f33', async(req, res) => {
+router.post('/6f0421d5-4357-49f8-8b24-14f79bea7f33', async(req, res) => {
     try {
         const places = await Place.find({ address: { city: req.body.city, district: req.body.district }, name: req.body.name, status : true });
         res.json(places);
@@ -44,9 +44,9 @@ router.get('/6f0421d5-4357-49f8-8b24-14f79bea7f33', async(req, res) => {
 });
 
 // get place by categories
-router.get('/6f0421d5-4357-49f8-8b24-14f79bea7f33', async(req, res) => {
+router.get('/6f0421d5-4357-49f8-8b24-14f79bea7f33/:categories', async(req, res) => {
     try {
-        const places = await Place.find({ categories: req.body.categories , status : true});
+        const places = await Place.find({ categories: req.params.categories , status : true});
         res.json(places);
     } catch (err) {
         res.send('Error' + err);

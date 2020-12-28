@@ -18,9 +18,9 @@ var storage = multer.diskStorage({
   var upload = multer({storage:storage});
 
 // get all post by user
-router.get('/07f59b0f-31db-4e34-b998-c494a2af9520', async(req, res) => {
+router.get('/07f59b0f-31db-4e34-b998-c494a2af9520/:iduser', async(req, res) => {
     try {
-        const posts = await Post.find({userPost:req.body.id});
+        const posts = await Post.find({userPost:req.params.iduser});
         res.json(posts);
     } catch (err) {
         res.send('Error' + err);
@@ -28,9 +28,9 @@ router.get('/07f59b0f-31db-4e34-b998-c494a2af9520', async(req, res) => {
 });
 
 //get all post by place
-router.get('/6f65f910-b4c7-4276-9410-dbb46b1f7ad6', async(req, res) => {
+router.get('/6f65f910-b4c7-4276-9410-dbb46b1f7ad6/:idplace', async(req, res) => {
     try {
-        const posts = await Post.find({place:req.body.id});
+        const posts = await Post.find({place:req.params.idplace});
         res.json(posts);
     } catch (err) {
         res.send('Error' + err);
@@ -38,9 +38,9 @@ router.get('/6f65f910-b4c7-4276-9410-dbb46b1f7ad6', async(req, res) => {
 });
 
 //get one post (detail post)
-router.get('/4911b499-bc8a-42a9-8cf0-34b1dd7f3c71', async(req, res) => {
+router.post('/4911b499-bc8a-42a9-8cf0-34b1dd7f3c71/:idpost', async(req, res) => {
     try {
-        const post = await Post.findOne({_id:req.body.id});
+        const post = await Post.findOne({_id:req.params.id});
         if(req.body.id_user != null){
             var result = checkliked(post._id,req.body.id_user);
             res.json(post, {isLiked : result});
