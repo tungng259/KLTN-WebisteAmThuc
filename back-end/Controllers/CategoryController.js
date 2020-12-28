@@ -49,13 +49,13 @@ router.get('/4a2bd1f6-31eb-48c5-a894-8a664423bc01/:id',async(req, res)=>{
 //update category
 router.post('/0f0ff4fd-c3a6-41ea-927c-6fb058822da5',upload.single('categoryImage'),async(req,res)=>{
     if(req.files){
-        Category.updateOne({_id: req.body._id},{
+        await Category.updateOne({_id: req.body._id},{
             name : req.body.name,
             avatar : req.file.filename
         })
     }
     else{
-        Category.updateOne({_id: req.body._id},{
+        await Category.updateOne({_id: req.body._id},{
             name : req.body.name
         })
     }
@@ -65,7 +65,7 @@ router.post('/0f0ff4fd-c3a6-41ea-927c-6fb058822da5',upload.single('categoryImage
 //delete category
 router.post('/5871f3c4-de8e-42c2-808c-31d4db8a0824', async(req, res) => {
     try {
-        Place.findByIdAndUpdate({categories: req.body._id},{categories : null})
+        await Place.findByIdAndUpdate({categories: req.body._id},{categories : null})
         Category.deleteOne({_id: req.body._id});
         res.json({'Sucessful': true });
     }

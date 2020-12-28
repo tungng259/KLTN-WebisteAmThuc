@@ -82,7 +82,7 @@ function updateRatingPlace(id,rating){
         const sum = place.rating + rating;
         const count = Post.count({place:id});
         place.rating = sum/count;
-        Place.updateOne({_id: place._id},{
+        await Place.updateOne({_id: place._id},{
             rating : place.rating
         })
     } catch (err) {
@@ -95,11 +95,11 @@ router.post('/075313a0-481a-4a13-9765-3f14ee17b612', async(req, res) => {
     try {
         let updateTime = new Date();
         if(req.file){
-            Post.findOneAndUpdate({_id: req.body._id},{
+            await Post.findOneAndUpdate({_id: req.body._id},{
                 image  :req.files.filename
             })
         }
-        Post.findOneAndUpdate({_id: req.body._id},{
+        await Post.findOneAndUpdate({_id: req.body._id},{
             title : req.body.title,  
             place : req.body.place,
             content : req.body.content,
@@ -133,7 +133,7 @@ router.post('/094a0019-5f18-4c53-b8fc-a8142a21e622', async(req, res) => {
 function increaseLikePost(id_User,id_Post){
     var post = Post.findOne({_id:id_Post});
     var count = post.like;
-    Post.findByIdAndUpdate(id_Post,{like: ++count});
+    await Post.findByIdAndUpdate(id_Post,{like: ++count});
     const likes = new Like();
     likes.id_user = id_User,
     likes.id_post = id_Post
@@ -143,14 +143,14 @@ function increaseLikePost(id_User,id_Post){
 function decreaseLikePost(id_User,id_Post){
     var post = Post.findOne({_id:id_Post});
     var count = post.like;
-    Post.findByIdAndUpdate(id_Post,{like: --count});
+    await Post.findByIdAndUpdate(id_Post,{like: --count});
     Like.deleteOne({id_user:id_User,id_Post:id_Post});
 }
 
 //check is post liked
 //check is user followed ?
 function checkliked(id_Post,id_User){
-    Like.find({id_post:id_Post}).forEach(function () {
+    await Like.find({id_post:id_Post}).forEach(function () {
         if(id_user == id_User ) return true;
     });
     return false;

@@ -87,13 +87,12 @@ router.get('/077137bb-22ec-479c-8be3-62dd5c9e599d/:id', async(req, res) => {
 //update information user
 router.post('/509b6cf0-3996-4853-8e28-1dcd93ac14f2/:id',upload.single('userImage'), async(req, res) => {
     try {
-        const user = await User.findById(req.params.id);
         if(req.file){
-            User.findByIdAndUpdate(req.params.id,{
+            await User.findByIdAndUpdate(req.params.id,{
                 avatar : req.file.filename
             });
         }
-        User.findByIdAndUpdate(req.params.id,{
+        await User.findByIdAndUpdate(req.params.id,{
             username : req.body.username,
             fullname : req.body.fullname,
             phone : req.body.phone,
@@ -101,7 +100,7 @@ router.post('/509b6cf0-3996-4853-8e28-1dcd93ac14f2/:id',upload.single('userImage
             gender: req.body.gender,
             country: req.body.country
         });
-        
+        //const user = await User.findById(req.params.id);
         res.json({'Sucessful': true });
     } catch (err) {
         res.send('Error' + err);
@@ -111,7 +110,7 @@ router.post('/509b6cf0-3996-4853-8e28-1dcd93ac14f2/:id',upload.single('userImage
 router.post('/e0c48bcf-db97-4c31-82f1-e87ecc9e58c8/:id', async(req,res)=>{
     try{
         var hashedpassword = await bcrypt.hash(req.body.password,12);
-        User.findOneAndUpdate(req.params.id,{password:hashedpassword});
+        await User.findOneAndUpdate(req.params.id,{password:hashedpassword});
     }catch(err){
         res.send('Error' + err);
     }
@@ -136,7 +135,7 @@ router.post('/26828687-b3e0-431b-9226-55fb3a857bef', async(req, res) => {
 function FollowUser(id_User,id_Follower){
     var user = User.findOne({_id:id_User});
     var count = user.follower;
-    User.findByIdAndUpdate(id_User,{follower: ++count});
+    await User.findByIdAndUpdate(id_User,{follower: ++count});
     const follow = new Follow(
         id_user = id_User,
         id_follower = id_Follower
@@ -147,13 +146,13 @@ function FollowUser(id_User,id_Follower){
 function UnFollowUser(id_Followed,id_Follower){
     var user = User.findOne({_id:id_Followed});
     var count = user.follwer;
-    User.findByIdAndUpdate(id_Followed,{follower: --count});
-    Follow.deleteOne({id_user:id_Followed,id_follower:id_Follower});
+    await User.findByIdAndUpdate(id_Followed,{follower: --count});
+    await Follow.deleteOne({id_user:id_Followed,id_follower:id_Follower});
 }
 
 //check is user followed ?
 function checkfollowed(id_Followed,id_Follower){
-    Follow.find({id_user:id_Followed}).forEach(function () {
+    await Follow.find({id_user:id_Followed}).forEach(function () {
         if(id_follower == id_Follower ) return true;
     });
     return false;

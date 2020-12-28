@@ -78,7 +78,7 @@ function increaseCategoryNumber(id){
     try {
         const categories = Category.findById(id);
         categories.number += 1;
-        Category.findByIdAndUpdate(id,{number:categories.number});
+        await Category.findByIdAndUpdate(id,{number:categories.number});
     } catch (err) {
         res.send('Error' + err);
     }
@@ -97,16 +97,16 @@ router.get('/b0146340-5a11-49b5-a2f7-9b31baad0e5c/:id', async(req, res) => {
 router.post('/cfc9853d-2866-473d-b274-88d838ea29c1', async(req, res) => {
     try {
         if(req.files){
-            Place.updateOne({_id: req.body._id},{
+            await Place.updateOne({_id: req.body._id},{
                 image : req.files.filename
             })
         }
         if(req.file){
-            Place.updateOne({_id: req.body._id},{
+            await Place.updateOne({_id: req.body._id},{
                 avatar : req.file.originalname,
             })
         }
-        Place.updateOne({_id: req.body._id},{
+        await Place.updateOne({_id: req.body._id},{
             name : req.body.name,
             address : {
                 city: req.body.city,
@@ -128,7 +128,7 @@ router.post('/b1ba7a47-29a2-470c-9a98-b511b401dd4b', async(req, res) => {
         categories = Category.find({_id: req.body.categories});
         Place.deleteOne({_id: req.body._id});
         categories.number--;
-        Category.findByIdAndUpdate({_id:req.body.categories},{number:categories.number--});
+        await Category.findByIdAndUpdate({_id:req.body.categories},{number:categories.number--});
         res.json({'Sucessful': true });
     }
     catch (err) {
