@@ -55,7 +55,7 @@ router.get('/6f0421d5-4357-49f8-8b24-14f79bea7f33/:categories', async(req, res) 
 
 //post new place
 router.post('/6f0421d5-4357-49f8-8b24-14f79bea7f33', upload.array('placeImages',12), (req, res) => {
-    var places = new Place();
+    const places = new Place();
     places.name = req.body.name,     
     places.address = {
             city: req.body.city,
@@ -68,7 +68,7 @@ router.post('/6f0421d5-4357-49f8-8b24-14f79bea7f33', upload.array('placeImages',
         places.status = false
     try {
         places.save();
-        increaseCategoryNumber(req.body.categories)
+        //increaseCategoryNumber(req.body.categories);
         res.json(places);
     } catch (err) {
         res.send('Error' + err);
@@ -77,7 +77,8 @@ router.post('/6f0421d5-4357-49f8-8b24-14f79bea7f33', upload.array('placeImages',
 function increaseCategoryNumber(id){
     try {
         const categories = Category.findById(id);
-        categories.number = ++categories.number;
+        categories.number += 1;
+        Category.findByIdAndUpdate(id,{number:categories.number});
     } catch (err) {
         res.send('Error' + err);
     }

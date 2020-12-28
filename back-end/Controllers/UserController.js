@@ -39,6 +39,12 @@ router.post('/6e45ab7f-4ccc-451b-8e8a-fca558df5f0c', async(req, res) => {
             
             users.password = hashedpassword;
             users.fullname = req.body.fullname;
+            users.email = req.body.email;
+            users.phone = null;
+            users.birthday = null;
+            users.avatar = "80-805523_default-avatar-svg-png-icon-free-download-264157";
+            users.country = null;
+            users.gender = true;
             users.follower = 0;
             users.isAdmin = false;
             try {
@@ -90,7 +96,10 @@ router.post('/509b6cf0-3996-4853-8e28-1dcd93ac14f2/:id',upload.single('userImage
         User.findByIdAndUpdate(req.params.id,{
             username : req.body.username,
             fullname : req.body.fullname,
-            phone : req.body.phone
+            phone : req.body.phone,
+            birthday : req.body.birthday,
+            gender: req.body.gender,
+            country: req.body.country
         });
         
         res.json({'Sucessful': true });

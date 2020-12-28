@@ -20,6 +20,15 @@ var userSchema = new mongoose.Schema({
     phone:{
         type:String
     },
+    birthday:{
+        type:String
+    },
+    gender:{
+        type:Boolean
+    },
+    country:{
+        type: String
+    },
     avatar: {
         type: String
     },
