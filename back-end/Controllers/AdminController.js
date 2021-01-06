@@ -13,10 +13,10 @@ router.post('/0508c70f-e907-4d2a-a718-479e6fab5749', async(req, res) => {
     const checkuser = await User.findOne({ username: req.body.username });
     if (checkuser == null) {
         res.json({ 'Sucessful': false });
-    } else if ((checkuser.isAdmin != true) || !bcrypt.compare(req.body.password,checkuser.password) ) {
-        res.json({ 'Sucessful': false });
+    } else if(await bcrypt.compare(req.body.password,checkuser.password)== true && checkuser.isAdmin == true) {
+        res.json({ checkuser,'Sucessful': true });
     } else {
-        res.json({ checkuser, 'Sucessful': true });
+        res.json({'Sucessful': false });
     }
 });
 //delete user

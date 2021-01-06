@@ -38,7 +38,7 @@ router.post('/6f0421d5-4357-49f8-8b24-14f79bea7f33', async(req, res) => {
     //search place by name & region
     if(req.body.name){
         try {
-            const places = await Place.find({ name: new RegExp(req.body.name) , address: { city: req.body.city, district: req.body.district }, name: req.body.name, status : true });
+            const places = await Place.find({ name: new RegExp(req.body.name) , city: req.body.city, name: req.body.name, status : true });
             res.json(places);
         } catch (err) {
             res.send('Error' + err);
@@ -66,21 +66,21 @@ router.get('/6f0421d5-4357-49f8-8b24-14f79bea7f33/:categories', async(req, res) 
 });
 
 //post new place
-router.post('/6f0421d5-4357-49f8-8b24-14f79bea7f33', upload.array('placeImages',12), (req, res) => {
+router.post('/91d3992a-fb5f-403b-9274-128732a700d7', upload.array('placeImages',12), async(req, res) => {
     const places = new Place();
-    places.name = req.body.name,     
+    places.name = req.body.name;    
     places.address = {
             city: req.body.city,
             district: req.body.district,
             address: req.body.address
-        },
-        places.image =req.files.filename,
-        places.categories = req.body.categories,
-        places.rating =0,
-        places.status = false
+        };
+        places.image =req.files.filename;
+        places.categories = req.body.categories;
+        places.rating =0;
+        places.status = false;
     try {
         places.save();
-        //increaseCategoryNumber(req.body.categories);
+         increaseCategoryNumber(req.body.categories);
         res.json(places);
     } catch (err) {
         res.send('Error' + err);

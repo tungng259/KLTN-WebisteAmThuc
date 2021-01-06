@@ -40,7 +40,7 @@ router.get('/6f65f910-b4c7-4276-9410-dbb46b1f7ad6/:idplace', async(req, res) => 
 //get one post (detail post)
 router.post('/4911b499-bc8a-42a9-8cf0-34b1dd7f3c71/:idpost', async(req, res) => {
     try {
-        const post = await Post.findOne({_id:req.params.id});
+        const post = await Post.findOne({_id:req.params.idpost});
         if(req.body.id_user != null){
             var result = checkliked(post._id,req.body.id_user);
             res.json(post, {isLiked : result});
@@ -54,21 +54,23 @@ router.post('/4911b499-bc8a-42a9-8cf0-34b1dd7f3c71/:idpost', async(req, res) => 
 });
 
 //create new post
-router.post('/5469597b-3042-4088-a657-599bf3d9b1ba', upload.single('postImage'), (req, res) => {
+router.post('/5469597b-3042-4088-a657-599bf3d9b1ba', upload.single('postImage'), async(req, res) => {
     let postTime = new Date();
     var post = new Post();
-    post.title = req.body.title,
-    post.image = req.file.filename,    
-    post.place =req.body.place,
-    post.content = req.body.content,
-    post.userPost = req.body.userPost,
-    post.postDate = postTime,
-    post.rating =req.body.rating,
-    post.updateDate = null,
-    post.like = 0,
-    post.reported = 0
+    if(req.file){
+        post.image = req.file.filename;    
+    }
+    post.title = req.body.title;
+    post.place =req.body.place;
+    post.content = req.body.content;
+    post.userPost = req.body.userPost;
+    post.postDate = postTime;
+    post.rating =req.body.rating;
+    post.updateDate = null;
+    post.like = 0;
+    post.reported = 0;
     try {
-        updateRatingPlace(req.body.place);
+        await updateRatingPlace(post.place,post.rating);
         post.save();
         res.json(post);
     } catch (err) {
@@ -76,18 +78,13 @@ router.post('/5469597b-3042-4088-a657-599bf3d9b1ba', upload.single('postImage'),
     }
 });
 
-function updateRatingPlace(id,rating){
-    try {
-        const place =  Place.findById(id);
-        const sum = place.rating + rating;
-        const count = Post.count({place:id});
-        place.rating = sum/count;
-        Place.updateOne({_id: place._id},{
-            rating : place.rating
-        })
-    } catch (err) {
-        res.send('Error' + err);
-    }
+async function updateRatingPlace(id,rating){
+    const place = await Place.findOne({_id:id});
+    const sum = place.rating + rating;
+    place.rating = parseInt(sum/2);
+    await Place.updateOne({_id: place._id},{
+        rating : place.rating
+    });
 }
 
 //update post

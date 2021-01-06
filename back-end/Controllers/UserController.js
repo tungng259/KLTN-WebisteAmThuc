@@ -128,8 +128,9 @@ router.post('/06b5a92f-4299-47ed-a7b4-d4a90341496c',async(req,res)=>{
             });
         }
       });
+    });
 });
-router.post('',(req,res)=>{
+router.post('3c5b2a09-762c-44ae-a01e-3bed04e04834/:token',async(req,res)=>{
   let resetPasswordToken = req.query.token;
   if (resetPasswordToken) {
     jsonwebtoken.verify(
@@ -160,7 +161,7 @@ router.post('',(req,res)=>{
       message: "No Found Token",
     });
   }
-})
+});
 // get user by id
 router.get('/077137bb-22ec-479c-8be3-62dd5c9e599d/:id', async(req, res) => {
     try {
