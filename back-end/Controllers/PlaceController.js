@@ -82,21 +82,12 @@ router.post('/91d3992a-fb5f-403b-9274-128732a700d7', upload.array('placeImages',
         places.status = false;
     try {
         places.save();
-         increaseCategoryNumber(req.body.categories);
         res.json(places);
     } catch (err) {
         res.send('Error' + err);
     }
 });
-function increaseCategoryNumber(id){
-    try {
-        const categories = Category.findById(id);
-        categories.number += 1;
-        Category.findByIdAndUpdate(id,{number:categories.number});
-    } catch (err) {
-        res.send('Error' + err);
-    }
-}
+
 
 // get place by id
 router.get('/b0146340-5a11-49b5-a2f7-9b31baad0e5c/:id', async(req, res) => {

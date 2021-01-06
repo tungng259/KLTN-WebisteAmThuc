@@ -86,8 +86,8 @@ router.post('/5469597b-3042-4088-a657-599bf3d9b1ba', upload.single('postImage'),
     post.like = 0;
     post.reported = 0;
     try {
-        await updateRatingPlace(post.place,post.rating);
         post.save();
+        await updateRatingPlace(post.place,post.rating);
         res.json(post);
     } catch (err) {
         res.send('Error' + err);
@@ -107,7 +107,7 @@ async function updateRatingPlace(id,rating){
 }
 async function fixRatingPlace(id,rating){
     const place = await Place.findOne({_id:id});
-    const count = await Post.count({place:id});
+    const count = await Post.count({place:id}) - 1;
     const sum = place.sum_rating - rating;
     place.sum_rating = sum;
     place.rating = parseInt(sum/count);
@@ -142,12 +142,12 @@ router.post('/075313a0-481a-4a13-9765-3f14ee17b612', async(req, res) => {
 //like Post-unlike Post
 router.post('/094a0019-5f18-4c53-b8fc-a8142a21e622', async(req, res) => {
     try {
-        checklike = Like.findOne({id_user: req.body.id_user,id_post: req.body.id_post});
+        checklike = await Like.findOne({id_user: req.body.id_user,id_post: req.body.id_post});
         if(checklike == null){
-            increaseLikePost(req.body.id_user,req.body.id_post);
+            await increaseLikePost(req.body.id_user,req.body.id_post);
         }
         else{
-            decreaseLikePost(req.body.id_user,req.body.id_post);
+            await decreaseLikePost(req.body.id_user,req.body.id_post);
         }
         res.json({'Sucessful': true });
     }
@@ -160,7 +160,7 @@ router.post('/094a0019-5f18-4c53-b8fc-a8142a21e622', async(req, res) => {
 router.post('/ca4ed1b4-e4d0-4c15-8728-1c1172a650b5/:id', async(req, res) => {
     try {
         await Like.deleteMany({id_post:req.params.id});
-        const post = Post.findOne({_id:req.params.id});
+        const post = await Post.findOne({_id:req.params.id});
         await fixRatingPlace(post.place,post.rating);
         await Post.findOneAndDelete({_id: req.params.id});
         res.json({'Sucessful': true });
@@ -170,27 +170,27 @@ router.post('/ca4ed1b4-e4d0-4c15-8728-1c1172a650b5/:id', async(req, res) => {
     }
 });
 
-function increaseLikePost(id_User,id_Post){
-    var post = Post.findOne({_id:id_Post});
+ async function increaseLikePost(id_User,id_Post){
+    var post = await Post.findOne({_id:id_Post});
     var count = post.like;
-    Post.findByIdAndUpdate(id_Post,{like: ++count});
+    await Post.findByIdAndUpdate(id_Post,{like: ++count});
     const likes = new Like();
     likes.id_user = id_User,
     likes.id_post = id_Post
     likes.save();
 }
 
-function decreaseLikePost(id_User,id_Post){
-    var post = Post.findOne({_id:id_Post});
-    var count = post.like;
-    Post.findByIdAndUpdate(id_Post,{like: --count});
-    Like.deleteOne({id_user:id_User,id_Post:id_Post});
+ async function decreaseLikePost (id_User,id_Post){
+    var post = await Post.findOne({_id:id_Post});
+    var count = await post.like;
+    await Post.findByIdAndUpdate(id_Post,{like: --count});
+    await Like.deleteOne({id_user:id_User,id_Post:id_Post});
 }
 
 //check is post liked
 //check is user followed ?
-function checkliked(id_Post,id_User){
-    Like.find({id_post:id_Post}).forEach(function () {
+async function checkliked(id_Post,id_User){
+    await Like.find({id_post:id_Post}).forEach(function () {
         if(id_user == id_User ) return true;
     });
     return false;

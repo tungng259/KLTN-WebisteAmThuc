@@ -27,12 +27,30 @@ router.delete('/d9bf9936-c269-401e-a811-bb2b19b40be6/:id',async(req,res)=>{
         await Follow.deleteMany({id_user:req.params.id});
         await Follow.deleteMany({id_follower:req.params.id});
         await Like.deleteMany({id_user:req.params.id});
+        const posts = await Post.find({userPost:req.params.id});
+        posts.forEach(post => {
+            await Like.deleteMany({id_post:post._id});
+            await fixRatingPlace(post.place,post.rating);
+            Post.findByIdAndDelete(post._id);
+        });
         await User.findOneAndDelete({_id: req.params.id});
         res.json({'Sucessful': true});} 
     catch (err) {
         res.send('Error' + err);
     }
 });
+
+async function fixRatingPlace(id,rating){
+    const place = await Place.findOne({_id:id});
+    const count = await Post.count({place:id}) - 1;
+    const sum = place.sum_rating - rating;
+    place.sum_rating = sum;
+    place.rating = parseInt(sum/count);
+    await Place.updateOne({_id: place._id},{
+        rating : place.rating,
+        sum_rating : place.sum_rating
+    });
+}
 // get all place need be accepted
 router.get('/9498b701-7324-4825-b5b2-895bc471ec78', async(req, res) => {
     try {
@@ -43,18 +61,28 @@ router.get('/9498b701-7324-4825-b5b2-895bc471ec78', async(req, res) => {
     }
 });
 //accept post new place
-router.post('/38125532-3ba8-4019-a7ea-17d88ea3cb32',async(req,res)=>{
+router.post('/38125532-3ba8-4019-a7ea-17d88ea3cb32/:id',async(req,res)=>{
     try{
-        await Place.findOneAndUpdate({_id: req.body.id},{
+        place = await Place.findOne({_id: req.params.id});
+        await increaseCategoryNumber(place.categories);
+        await Place.findOneAndUpdate({_id: req.params.id},{
         status : true
     });
-    res.json(Place.findOne({_id: req.body.id}));
+    res.json({"Successful":true,place});
     }
     catch (err){
         res.send('Error' + err);
     }
 });
-
+async function increaseCategoryNumber(id){
+    try {
+        const categories = await Category.findById(id);
+        categories.number += 1;
+        await Category.findByIdAndUpdate(id,{number:categories.number});
+    } catch (err) {
+        res.send('Error' + err);
+    }
+}
 //get reported post
 router.get('/7d075fed-f74a-4c94-8897-331430d92514',async(req,res)=>{
     var count = User.count();
