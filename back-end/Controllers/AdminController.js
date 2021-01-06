@@ -1,6 +1,8 @@
 const express = require("express");
 const User = require("../Modules/users");
 const Category = require("../Modules/category");
+const Like = require('../Modules/likePost');
+const Follow = require('../Modules/follow');
 const Place = require("../Modules/places");
 const Post = require("../Modules/post");
 const router = express.Router();
@@ -20,9 +22,16 @@ router.post('/0508c70f-e907-4d2a-a718-479e6fab5749', async(req, res) => {
     }
 });
 //delete user
-router.post('/d9bf9936-c269-401e-a811-bb2b19b40be6',async(req,res)=>{
-    await User.findOneAndDelete({_id: req.body.id});
-    res.json({"Result":"Delete Successful"});
+router.delete('/d9bf9936-c269-401e-a811-bb2b19b40be6/:id',async(req,res)=>{
+    try {
+        await Follow.deleteMany({id_user:req.params.id});
+        await Follow.deleteMany({id_follower:req.params.id});
+        await Like.deleteMany({id_user:req.params.id});
+        await User.findOneAndDelete({_id: req.params.id});
+        res.json({'Sucessful': true});} 
+    catch (err) {
+        res.send('Error' + err);
+    }
 });
 // get all place need be accepted
 router.get('/9498b701-7324-4825-b5b2-895bc471ec78', async(req, res) => {

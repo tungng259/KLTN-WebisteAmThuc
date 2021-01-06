@@ -1,6 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const Category = require("../Modules/category");
+const Post = require("../Modules/post");
 const Place = require("../Modules/places");
 const router = express.Router();
 var storage = multer.diskStorage({
@@ -76,6 +77,7 @@ router.post('/91d3992a-fb5f-403b-9274-128732a700d7', upload.array('placeImages',
         };
         places.image =req.files.filename;
         places.categories = req.body.categories;
+        places.sum_rating = 0;
         places.rating =0;
         places.status = false;
     try {
@@ -135,10 +137,11 @@ router.post('/cfc9853d-2866-473d-b274-88d838ea29c1', async(req, res) => {
 });
 
 //delete Place
-router.post('/b1ba7a47-29a2-470c-9a98-b511b401dd4b', async(req, res) => {
+router.post('/b1ba7a47-29a2-470c-9a98-b511b401dd4b/:id', async(req, res) => {
     try {
+        await Post.deleteMany({place:req.params.id});
         categories = Category.find({_id: req.body.categories});
-        Place.deleteOne({_id: req.body._id});
+        Place.deleteOne({_id: req.params.id});
         categories.number--;
         await Category.findByIdAndUpdate({_id:req.body.categories},{number:categories.number--});
         res.json({'Sucessful': true });

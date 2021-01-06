@@ -1,11 +1,22 @@
 const express = require("express");
 const multer = require("multer");
+// var AWS = require("aws-sdk");
 
 const Post = require("../Modules/post");
 const Place = require("../Modules/places");
 const Like = require("../Modules/likePost");
 
 const router = express.Router();
+
+// let s3bucket = new AWS.S3({
+//     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+//     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+//     region: process.env.AWS_REGION,
+//   });
+
+// var storage = multer.memoryStorage();
+var upload = multer({ storage: storage });
+
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -58,6 +69,11 @@ router.post('/5469597b-3042-4088-a657-599bf3d9b1ba', upload.single('postImage'),
     let postTime = new Date();
     var post = new Post();
     if(req.file){
+        // var params = {
+        //     Bucket: process.env.AWS_BUCKET_NAME,
+        //     Key: file.originalname,
+        //     Body: file.buffer,
+        //   };
         post.image = req.file.filename;    
     }
     post.title = req.body.title;
@@ -80,13 +96,26 @@ router.post('/5469597b-3042-4088-a657-599bf3d9b1ba', upload.single('postImage'),
 
 async function updateRatingPlace(id,rating){
     const place = await Place.findOne({_id:id});
-    const sum = place.rating + rating;
-    place.rating = parseInt(sum/2);
+    const count = await Post.count({place:id});
+    const sum = place.sum_rating + rating;
+    place.sum_rating = sum;
+    place.rating = parseInt(sum/count);
     await Place.updateOne({_id: place._id},{
-        rating : place.rating
+        rating : place.rating,
+        sum_rating : place.sum_rating
     });
 }
-
+async function fixRatingPlace(id,rating){
+    const place = await Place.findOne({_id:id});
+    const count = await Post.count({place:id});
+    const sum = place.sum_rating - rating;
+    place.sum_rating = sum;
+    place.rating = parseInt(sum/count);
+    await Place.updateOne({_id: place._id},{
+        rating : place.rating,
+        sum_rating : place.sum_rating
+    });
+}
 //update post
 router.post('/075313a0-481a-4a13-9765-3f14ee17b612', async(req, res) => {
     try {
@@ -120,6 +149,20 @@ router.post('/094a0019-5f18-4c53-b8fc-a8142a21e622', async(req, res) => {
         else{
             decreaseLikePost(req.body.id_user,req.body.id_post);
         }
+        res.json({'Sucessful': true });
+    }
+    catch{
+        res.send('Error' + err);
+    }
+});
+
+//delete Post
+router.post('/ca4ed1b4-e4d0-4c15-8728-1c1172a650b5/:id', async(req, res) => {
+    try {
+        await Like.deleteMany({id_post:req.params.id});
+        const post = Post.findOne({_id:req.params.id});
+        await fixRatingPlace(post.place,post.rating);
+        await Post.findOneAndDelete({_id: req.params.id});
         res.json({'Sucessful': true });
     }
     catch{

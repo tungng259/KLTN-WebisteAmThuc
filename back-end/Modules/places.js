@@ -23,6 +23,9 @@ var placeSchema = new mongoose.Schema({
     rating:{
         type:Number
     },
+    sum_rating:{
+        type:Number
+    },
     status:{
         type:Boolean
     },
