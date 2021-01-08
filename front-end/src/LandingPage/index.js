@@ -86,8 +86,8 @@ const Index = () => {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/contact" exact className="menu-link">
-              Contact Us
+            <NavLink to="/menu" exact className="menu-link">
+              Menu
             </NavLink>
           </li>
         </ul>

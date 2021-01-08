@@ -1,5 +1,6 @@
-import React from "react";
-
+import React,{useState, useEffect,useContext} from "react";
+import { NavLink } from "react-router-dom";
+import { CategoryContext } from "../Auth/categories";
 import "./index.css";
 
 import salad from "./Images/menu.png";
@@ -10,6 +11,28 @@ import cafe from "./Images/menu4.png";
 import cake from "./Images/menu5.png";
 
 const Index = () => {
+   const [data,setData] = useState("");
+
+   const dataCate = useContext(CategoryContext);
+
+  useEffect(() => {
+    const sendRequest = async () => {
+      try {
+        const response = await fetch("http://localhost:9000/category/fc82d78d-ee17-4b3e-8233-e2e074b629ec");
+
+      const responseData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(responseData.message);
+        }
+        await setData(responseData);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    sendRequest();
+  }, []);
+
   return (
     <React.Fragment>
       <section id="menupage">
@@ -19,59 +42,23 @@ const Index = () => {
           </h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
         </div>
+        
         <div class="content">
+         {Object.keys(data).map(cate=>(
           <div class="box">
             <div class="imgBx">
-              <img src={salad} />
+               <NavLink to="/categorypost" exact>
+                <img src={data[cate].avatar} onClick={e => dataCate.getid(data[cate]._id)}/>
+              </NavLink>
             </div>
             <div class="text">
-              <h3>Special Salads</h3>
+              <h3>{data[cate].name}</h3>
             </div>
-          </div>
-          <div class="box">
-            <div class="imgBx">
-              <img src={soup} />
-            </div>
-            <div class="text">
-              <h3>Special Soup</h3>
-            </div>
-          </div>
-          <div class="box">
-            <div class="imgBx">
-              <img src={pasta} />
-            </div>
-            <div class="text">
-              <h3>Special Pasta</h3>
-            </div>
-          </div>
-          <div class="box">
-            <div class="imgBx">
-              <img src={beef} />
-            </div>
-            <div class="text">
-              <h3>Special Beefsteak</h3>
-            </div>
-          </div>
-          <div class="box">
-            <div class="imgBx">
-              <img src={cafe} />
-            </div>
-            <div class="text">
-              <h3>Special Coffee</h3>
-            </div>
-          </div>
-          <div class="box">
-            <div class="imgBx">
-              <img src={cake} />
-            </div>
-            <div class="text">
-              <h3>Special Cake</h3>
-            </div>
-          </div>
+          </div>))}
         </div>
         <div class="title">
-          <a href="#" class="btn">
-            View All
+           <a href="#" class="btn">
+             View All
           </a>
         </div>
       </section>

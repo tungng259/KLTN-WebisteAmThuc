@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 
 import "./index.css";
 import { AuthContext } from "../Auth/auth-context";
+import { PostContext } from "../Auth/post";
 import post from "./Images/post.jpg";
 
 
@@ -10,6 +11,7 @@ const Index = () => {
   const [showForm, setShowForm] = useState(true);
   const [showCancel, setShowCancel] = useState("cancel");
   const auth = useContext(AuthContext);
+  const dataPost = useContext(PostContext);
   const [data,setData]=useState({
     username:"",
     fullname:"",
@@ -22,6 +24,7 @@ const Index = () => {
   const [datapost,setPost] = useState("");
 
   useEffect(() => {
+    console.log("id",auth.id)
     const sendRequest = async () => {
       try {
         const response = await fetch("http://localhost:9000/user/077137bb-22ec-479c-8be3-62dd5c9e599d/"+auth.id);
@@ -32,8 +35,6 @@ const Index = () => {
           throw new Error(responseData.message);
         }
         await setData(responseData);
-        console.log("Sucessful",data);
-        console.log("Thanh cong",responseData);
       } catch (err) {
         console.log(err);
       }
@@ -50,7 +51,6 @@ const Index = () => {
           throw new Error(responseData.message);
         }
         await setPost(responseData);
-        console.log("a",responseData);
       } catch (err) {
         console.log(err);
       }
@@ -255,7 +255,9 @@ const Index = () => {
       <div className="content">
         {Object.keys(datapost).map(yourpost=>(<div className="box">
           <div className="imgBx">
-            <img src={post} />
+            <NavLink to="/detailpost" exact>
+            <img src={post} onClick={e => dataPost.getid(datapost[yourpost]._id)}/>
+            </NavLink>
           </div>
           <div className="text">
             <h3>{datapost[yourpost].content}</h3>

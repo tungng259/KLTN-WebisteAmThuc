@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import { NavLink,withRouter } from "react-router-dom";
+import {SearchContext} from "../Auth/search";
 
 import "./index.css";
 import NavLinks from "./nav-link"; 
 
 export default withRouter(function Index({ location }) {
+  const searchData = useContext(SearchContext);
   const [currentPath, setCurrentPath] = useState(location.pathname); 
   const [showDefault, setShowDefault] = useState("");
   const { pathname } = location;
@@ -51,6 +53,8 @@ export default withRouter(function Index({ location }) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const [search,setSearch]=useState({name:""})
+
   return (
       <div id="header">
         <header className={showDefault}>
@@ -63,8 +67,10 @@ export default withRouter(function Index({ location }) {
                 <option>Ho Chi Minh</option>
                 <option>Ha Noi</option>
               </select>
-              <input type="text" placeholder="Search VFood" />
-              <input type="submit" value="Search" />
+              <input type="text" placeholder="Search VFood" onChange={e => setSearch({name: e.target.value })}/>
+               <NavLink to="/search" exact>
+              <input type="submit" value="Search" onClick={e=>searchData.getid(search.name)}/>
+              </NavLink>
             </form>
           </div>
           <ul className="navigation">
